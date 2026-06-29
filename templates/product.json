@@ -339,7 +339,7 @@
         "margin_bottom": 40,
         "text_alignment": "center",
         "columns": 4,
-        "heading_size": 24,
+        "heading_size": 40,
         "heading_color": "#000000",
         "text_color": "#333333",
         "border_color": "#eeeeee",
