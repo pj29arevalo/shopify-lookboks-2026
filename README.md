@@ -12,11 +12,12 @@
 
 ### Lookbook configuration 
 
-#### 1. Metafield
-![image](https://shottr.cc/s/1anI/SCR-20260629-ne8p.png)
+#### 1. Metaobject
+<img width="1156" height="1020" alt="image" src="https://github.com/user-attachments/assets/887f5ed9-54df-4573-b050-37bfa097f647" />
+
 
 #### 2. Example lookbook entry
-![image](https://shottr.cc/s/154z/SCR-20260629-nf3p.png)
+<img width="1108" height="679" alt="image" src="https://github.com/user-attachments/assets/bea6ae00-5d4e-4b4f-9ef5-47989646a5e9" />
 
 
 ### Related code files
