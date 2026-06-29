@@ -1,3 +1,25 @@
+{% comment %}
+----------------------------------------------------------------------------
+Lookbook Section
+
+Purpose:
+- Renders a selected Lookbook metaobject.
+- Displays all products assigned to the selected lookbook.
+- Configurable entirely through the Shopify Theme Editor.
+
+Requirements Covered:
+✓ Theme section
+✓ Theme Customizer support
+✓ Shopify Metaobjects
+----------------------------------------------------------------------------
+{% endcomment %}
+
+{% comment %}
+Component styles.
+Uses section settings to allow merchants to customize spacing,
+colors, typography, layout and product grid directly from the Theme Editor.
+{% endcomment %}
+
 {% style %}
   #lookbook-{{ section.id }} {
     margin: {{ section.settings.margin_top }}px auto {{ section.settings.margin_bottom }}px;
@@ -233,11 +255,16 @@
 
 <div class="lookbook" id="lookbook-{{ section.id }}">
   {% if section.settings.lookbook != blank %}
-    {% assign lookbook = section.settings.lookbook %}
 
-  <script>
-    console.log({{ lookbook.products.value | json }})
-  </script>
+    {% comment %}
+    Retrieve the selected Lookbook metaobject from the section settings.
+    The metaobject contains:
+    - title
+    - description
+    - products
+    - boolean to show the lookbook on product pages
+    {% endcomment %}
+    {% assign lookbook = section.settings.lookbook %}
     
     <div class="lookbook__header">
       <h2 class="lookbook__title">{{ lookbook.title.value }}</h2>
@@ -249,10 +276,25 @@
     {% if lookbook.products.value != nil %}
       <div class="lookbook__products page-width">
         <div class="lookbook__products-grid">
+
+          {% comment %}
+          Loop through every product assigned to the selected Lookbook.
+          Each product card includes:
+          - featured image
+          - title
+          - pricing
+          - sale/sold-out badge
+          - optional Add to Cart button
+          {% endcomment %}
           {% for product in lookbook.products.value %}
             <div class="lookbook__product">
               <a href="{{ product.url }}" class="lookbook__product-link">
                 <div class="lookbook__product-image">
+
+                  {% comment %}
+                  Display the featured image.
+                  Fallback to a placeholder when no image exists.
+                  {% endcomment %}
                   {% if product.featured_image != blank %}
                     <img src="{{ product.featured_image | img_url: '500x500', crop: 'center' }}" 
                          alt="{{ product.title | escape }}" 
@@ -265,6 +307,12 @@
                     </div>
                   {% endif %}
                   
+                  {% comment %}
+                  Display inventory status:
+                  - Sold Out
+                  - Sale
+                  based on product availability and compare-at pricing.
+                  {% endcomment %}
                   {% if product.available == false %}
                     <span class="lookbook__product-sold-out">Sold out</span>
                   {% elsif product.compare_at_price > product.price %}
@@ -291,6 +339,10 @@
                 </div>
               </a>
               
+              {% comment %}
+              Optional Add to Cart form.
+              Uses the first available variant to support Shopify's native cart endpoint.
+              {% endcomment %}
               {% if section.settings.show_add_to_cart %}
                 <form class="lookbook__product-form" action="/cart/add" method="post">
                   <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
@@ -315,6 +367,18 @@
   {% endif %}
 </div>
 
+{% comment %}
+Theme Editor configuration.
+
+Allows merchants to customize:
+- Selected Lookbook
+- Typography
+- Colors
+- Layout
+- Product Grid
+- Add to Cart behavior
+without editing code.
+{% endcomment %}
 
 {% schema %}
 {

@@ -1,3 +1,26 @@
+{% comment %}
+----------------------------------------------------------------------------
+Product Lookbooks Section
+
+Purpose:
+Displays all Lookbooks that contain the current product.
+
+Workflow:
+1. Retrieve all Lookbook metaobjects.
+2. Find Lookbooks containing the current product.
+3. Render matching Lookbooks beneath the product page.
+
+Requirements Covered:
+✓ Product page integration
+✓ Shopify Metaobjects
+✓ Automatic Lookbook discovery
+----------------------------------------------------------------------------
+{% endcomment %}
+
+{% comment %}
+Component styles.
+Generated dynamically from Theme Editor settings.
+{% endcomment %}
 {% style %}
    #product-lookbooks-{{ section.id }} {
       margin: {{ section.settings.margin_top }}px auto {{ section.settings.margin_bottom }}px;
@@ -171,9 +194,21 @@
     }
 {% endstyle %}
 
+{% comment %}
+Retrieve every published Lookbook metaobject.
+These will be filtered to determine which Lookbooks
+contain the current product.
+{% endcomment %}
 {% assign lookbooks = metaobjects.lookbook.values %}
 {% assign lookbooks_with_product = null | sort %}
 
+{% comment %}
+Build a collection of Lookbooks that:
+- are enabled for product pages
+- include the current product
+
+The resulting collection is rendered below.
+{% endcomment %}
 {% liquid
   for lookbook in lookbooks
     if lookbook.show_on_product_pages.value == true
@@ -190,10 +225,10 @@
   endfor
 %}
 
-<script>
-  console.log({{ lookbooks_with_product | json }})
-</script>
-
+{% comment %}
+Render only if at least one matching Lookbook exists.
+Otherwise, render nothing to avoid unnecessary markup.
+{% endcomment %}
 {% if lookbooks_with_product.size > 0 %}
   <div class="product-lookbooks" id="product-lookbooks-{{ section.id }}">
     <h2 class="product-lookbooks__heading">{{ section.settings.heading }}</h2>
@@ -203,10 +238,21 @@
     {% endif %}
     
     <div class="product-lookbooks__container page-width">
+
+      {% comment %}
+      Render every matching Lookbook.
+      Each Lookbook displays all products assigned to it,
+      allowing customers to shop the complete collection.
+      {% endcomment %}
       {% for lookbook in lookbooks_with_product %}
       <div class="product-lookbooks__lb-container">
         <h3 class="product-lookbooks__title">{{ lookbook.title }}</h3>
         <div class="product-lookbooks__grid">
+
+          {% comment %}
+          Render every product belonging to the current Lookbook.
+          Includes product image, pricing and optional Add to Cart.
+          {% endcomment %}
           {% for lb_product in lookbook.products.value %}
             {% comment %}{% if lb_product.id != product.id %} {% endcomment %}
               <div class="product-lookbooks__product">
@@ -250,6 +296,11 @@
                 </a>
                 
                 {% if section.settings.show_add_to_cart %}
+
+                  {% comment %}
+                  Submit the selected product's first available variant
+                  using Shopify's native cart endpoint.
+                  {% endcomment %}
                   <form class="product-lookbooks__product-form" action="/cart/add" method="post">
                     <input type="hidden" name="id" value="{{ lb_product.selected_or_first_available_variant.id }}">
                     <button type="submit" class="product-lookbooks__product-add-button">
@@ -272,6 +323,20 @@
 {% else %}
   <div style="display: none;"></div>
 {% endif %}
+
+{% comment %}
+Theme Editor configuration.
+
+Allows merchants to customize:
+- headings
+- layout
+- spacing
+- colors
+- product grid
+- Add to Cart options
+
+No code changes required.
+{% endcomment %}
 
 {% schema %}
 {
